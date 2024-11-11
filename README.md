@@ -29,6 +29,6 @@ Sample data for three reservoirs is provided in CSV format:
 Water reservoir capacities in the US are commonly given in thousands of acre-feet (TAF). In most other countries, the metric system is used.
 
 ## Files
-- [Shasta_WML(Sample).csv](Shasta_WML(Sample).csv)
-- [Oroville_WML(Sample).csv](Oroville_WML(Sample).csv)
-- [Sonoma_WML(Sample).csv](Sonoma_WML(Sample).csv)
+- Shasta_WML(Sample).csv
+- Oroville_WML(Sample).csv
+- Sonoma_WML(Sample).csv

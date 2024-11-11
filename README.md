@@ -1,34 +1,53 @@
-# MQTT Data from California Reservoirs and Report
+# California Water Resources MQTT System
 
-## Overview
-The California Department of Water Resources aims to evaluate water availability across all state reservoirs. This is achieved by collecting Water Mark Levels (WML) from each reservoir and aggregating the data into a central repository for comprehensive reporting.
+This system monitors water mark levels (WML) across California's reservoirs using MQTT protocol for data collection and reporting.
 
-## Data Schema
-The data is organized using a `Reservoir_ID/WML` schema. For example:
-- Shasta reservoir reports to the `SHASTA/WML` topic.
-- Oroville reservoir reports to the `OROVILLE/WML` topic.
-- Sonoma reservoir reports to the `SONOMA/WML` topic.
+## System Components
 
-## Process
-1. **MQTT Publishers:** Sensors at each reservoir act as publishers, posting data to specific topics.
-2. **MQTT Subscribers:** A single subscriber collects data from these topics to produce daily summaries.
-3. **Data Model:** JSON is used as the data model for this purpose.
+1. **Publisher (publisher.py)**
+   - Reads water level data from CSV files
+   - Converts data to JSON format
+   - Publishes to specific MQTT topics for each reservoir (e.g., SHASTA/WML)
 
-## Sample Data
-Sample data for three reservoirs is provided in CSV format:
-- `Shasta_WML(Sample).csv`
-- `Oroville_WML(Sample).csv`
-- `Sonoma_WML(Sample).csv`
+2. **Subscriber (subscriber.py)**
+   - Subscribes to all reservoir topics
+   - Collects and processes incoming data
+   - Generates daily reports with water levels for each reservoir
 
-## Instructions
-1. Convert the sample data from CSV to JSON.
-2. Use MQTT publishers to send data to the respective reservoir topics.
-3. Implement an MQTT subscriber to generate daily reports based on the collected data.
+## Data Format
 
-## TAF
-Water reservoir capacities in the US are commonly given in thousands of acre-feet (TAF). In most other countries, the metric system is used.
+The system uses the following data format:
+- Input: CSV files with Date and TAF (Thousand Acre Feet) columns
+- MQTT Messages: JSON format with timestamp and taf values
+- Output: Daily reports showing water levels for each reservoir
 
-## Files
-- Shasta_WML(Sample).csv
-- Oroville_WML(Sample).csv
-- Sonoma_WML(Sample).csv
+## Usage
+
+1. Start the MQTT broker (if not already running):
+   ```bash
+   mosquitto
+   ```
+
+2. Start the subscriber:
+   ```bash
+   python subscriber.py
+   ```
+
+3. Run the publisher:
+   ```bash
+   python publisher.py
+   ```
+
+## Reports
+
+Daily reports are generated automatically and saved as text files in the format `report_MM_DD_YYYY.txt`. Each report includes:
+- Individual reservoir water levels in TAF
+- Total water capacity across all reservoirs
+
+## Sample Data Sources
+The system includes sample data for three reservoirs:
+- Shasta Reservoir
+- Oroville Reservoir
+- Sonoma Reservoir
+
+Each data source provides daily water mark levels in TAF (Thousand Acre Feet).

@@ -1,53 +1,86 @@
-# California Water Resources MQTT System
+# California Reservoir Water Level Monitoring System
 
-This system monitors water mark levels (WML) across California's reservoirs using MQTT protocol for data collection and reporting.
+A real-time water level monitoring system for California reservoirs using MQTT protocol. This system processes and publishes water level data from multiple reservoirs and generates daily reports.
 
-## System Components
+## Overview
 
-1. **Publisher (publisher.py)**
-   - Reads water level data from CSV files
-   - Converts data to JSON format
-   - Publishes to specific MQTT topics for each reservoir (e.g., SHASTA/WML)
+This project implements a publisher-subscriber architecture using MQTT to monitor water levels (in TAF - Thousand Acre Feet) across three major California reservoirs:
+- Shasta
+- Oroville
+- Sonoma
 
-2. **Subscriber (subscriber.py)**
-   - Subscribes to all reservoir topics
-   - Collects and processes incoming data
-   - Generates daily reports with water levels for each reservoir
+## System Requirements
 
-## Data Format
+- Python 3.x
+- paho-mqtt library
+- Running MQTT broker (e.g., Mosquitto) on localhost:1883
 
-The system uses the following data format:
-- Input: CSV files with Date and TAF (Thousand Acre Feet) columns
-- MQTT Messages: JSON format with timestamp and taf values
-- Output: Daily reports showing water levels for each reservoir
+## Installation
+
+1. Install the required Python package:
+```bash
+pip install paho-mqtt
+```
+
+2. Ensure you have an MQTT broker running on localhost:1883
+
+## File Structure
+
+- `publisher.py` - Reads CSV data and publishes to MQTT topics
+- `subscriber.py` - Subscribes to MQTT topics and generates reports
+- `*_WML(Sample).csv` - Sample water level data files for each reservoir
+- `report_*.txt` - Generated daily reports
 
 ## Usage
 
-1. Start the MQTT broker (if not already running):
-   ```bash
-   mosquitto
-   ```
+1. Start the subscriber:
+```bash
+python subscriber.py
+```
 
-2. Start the subscriber:
-   ```bash
-   python subscriber.py
-   ```
+2. In a separate terminal, run the publisher:
+```bash
+python publisher.py
+```
 
-3. Run the publisher:
-   ```bash
-   python publisher.py
-   ```
+## Data Format
 
-## Reports
+### Input CSV Format
+Each reservoir's CSV file should contain:
+- Date: Date of measurement
+- TAF: Water level in Thousand Acre Feet
 
-Daily reports are generated automatically and saved as text files in the format `report_MM_DD_YYYY.txt`. Each report includes:
-- Individual reservoir water levels in TAF
+### MQTT Topics
+The system uses the following topics:
+- SHASTA/WML
+- OROVILLE/WML
+- SONOMA/WML
+
+### Message Format
+Messages are published in JSON format:
+```json
+{
+    "timestamp": "date",
+    "taf": float_value
+}
+```
+
+## Daily Reports
+
+The subscriber generates daily reports (`report_*.txt`) containing:
+- Individual reservoir water levels
 - Total water capacity across all reservoirs
+- Timestamp of measurements
 
-## Sample Data Sources
-The system includes sample data for three reservoirs:
-- Shasta Reservoir
-- Oroville Reservoir
-- Sonoma Reservoir
+## Error Handling
 
-Each data source provides daily water mark levels in TAF (Thousand Acre Feet).
+The system includes error handling for:
+- MQTT connection failures
+- File reading/writing operations
+- Data parsing issues
+
+## Notes
+
+- Data is published with a 1-second delay between messages
+- Reports are automatically generated and updated as new data arrives
+- The system can be extended to include additional reservoirs by modifying the topics list and adding corresponding CSV files
